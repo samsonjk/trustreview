@@ -61,7 +61,7 @@ export default function ReviewForm({
       };
 
       // Update backend database via API
-      const response = await fetch("/api/product/update", {
+      const response = await fetch("/api/products/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,8 @@ export default function ReviewForm({
       }
 
       console.log("Review updated in database");
-      
+      setRating(5);
+      setComment("");
       setIsSuccess(true);
       onReviewSubmitted(); // ✅ Refresh reviews
     } catch (error) {

@@ -14,7 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/product");
+        const response = await fetch("/api/products");
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -39,7 +39,7 @@ export default function HomePage() {
         return (
           <Link
             key={product.id}
-            href={`/product/${product.id}`}
+            href={`/products/${product.id}`}
             className="bg-white rounded-xl shadow hover:shadow-md transition p-4 flex flex-col"
           >
             <Image
