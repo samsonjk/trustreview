@@ -9,6 +9,7 @@ const pool = new Pool({
   database: process.env.NEXT_DB_NAME,
   password: process.env.NEXT_DB_PASSWORD,
   port: process.env.NEXT_DB_PORT ? Number(process.env.NEXT_DB_PORT) : undefined,
+  ssl: process.env.NEXT_PUBLIC_DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
 });
 
 // Utility function to query the database
