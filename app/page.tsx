@@ -2,64 +2,39 @@
 
 "use client";
 
-import { products } from "@/lib/products";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getProvider } from "@/lib/alchemy";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/contract";
-import { ethers } from "ethers";
-
-// Define the review type at the top or above the component
-type ContractReviews = {
-  productId: number;
-  rating: number;
-};
-
 
 export default function HomePage() {
 
-  const [reviewsData, setReviewsData] = useState<{
-    [productId: number]: { totalRating: number; reviewCount: number };
-  }>({});
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchProducts = async () => {
       try {
-        const provider = getProvider();
-        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-        const allReviews = await contract.getAllReviews();
-
-        const reviewStats: { [productId: number]: { totalRating: number; reviewCount: number } } = {};
-
-        allReviews.forEach((review: ContractReviews) => {
-          const productId = Number(review.productId);
-          const rating = Number(review.rating);
-
-          if (!reviewStats[productId]) {
-            reviewStats[productId] = { totalRating: 0, reviewCount: 0 };
-          }
-
-          reviewStats[productId].totalRating += rating;
-          reviewStats[productId].reviewCount += 1;
-        });
-
-        setReviewsData(reviewStats);
-      } catch (error: unknown){
-        console.error("Error fetching reviews:", error);
+        const response = await fetch("/api/product");
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data: Product[] = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
     };
 
-    fetchReviews();
+    fetchProducts();
   }, []);
   
   return (
     <main className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {products.map((product) => {
-        const stats = reviewsData[product.id] || { totalRating: 0, reviewCount: 0 };
-        const averageRating =
-          stats.reviewCount > 0 ? stats.totalRating / stats.reviewCount : 0;
+        const starColor =
+          product.star_rating == 0 ? "grey" :
+          product.star_rating <= 2.4 ? "red" :
+          product.star_rating <= 3.9 ? "orange" : "green";
 
         return (
           <Link
@@ -81,14 +56,12 @@ export default function HomePage() {
                 <Star
                   key={i}
                   size={16}
-                  fill={i < Math.round(averageRating) ? "gold" : "none"}
-                  stroke="gold"
+                  fill={i < Math.round(product.star_rating) ? starColor : "none"}
+                  stroke={starColor}
                   strokeWidth={1.5}
                 />
               ))}
-              <span className="text-gray-600 ml-2">
-                ({stats.reviewCount})
-              </span>
+              <span className="text-gray-600 ml-2">({product.review_count})</span>
             </div>
           </Link>
         );

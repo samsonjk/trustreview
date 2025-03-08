@@ -4,52 +4,33 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { products } from "@/lib/products";
 import ReviewForm from "@/components/ReviewForm";
-import { ethers, AlchemyProvider } from "ethers";
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from "@/lib/contract";
-import { useCallback } from "react";
-
-type ContractReview = {
-  reviewId: number;
-  rating: number;
-  comment: string;
-  reviewer: string;
-  timestamp: number;
-};
 
 export default function ProductDetails() {
   const { id } = useParams();
   const productId = Number(id);
 
-  const product = products.find((p) => p.id === productId);
-
-  const [reviews, setReviews] = useState<ContractReview[]>([]);
-  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
-
   const { address } = useAccount();
 
-  const fetchReviews = useCallback(async () => {
+  const fetchProduct = async () => {
     try {
-      setLoadingReviews(true);
-      const provider = new AlchemyProvider("sepolia", process.env.NEXT_PUBLIC_ALCHEMY_API_KEY);
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-      const reviewsData = await contract.getReviewsbyproductId(productId);
-      setReviews(reviewsData);
+      const response = await fetch(`http://localhost:3000/api/product?productId=${productId}`);
+      const data = await response.json();
+      setProduct(data);
     } catch (error) {
-      console.log("Fetch Error", error);
+      console.error("Error fetching product:", error);
     } finally {
-      setLoadingReviews(false);
+      setLoading(false);
     }
-  }, [productId]);
-
+  };
 
   useEffect(() => {
     setIsClient(true);
-    fetchReviews();
-  }, [fetchReviews]);
-
+    fetchProduct();
+  }, [productId]);
 
   const getRatingColor = (rating: number) => {
     if (rating <= 2) return "text-red-500";
@@ -57,6 +38,7 @@ export default function ProductDetails() {
     return "text-green-500";
   };
 
+  if (loading) return <div className="p-8">Loading product details...</div>;
   if (!product) return <div className="p-8">Product not found.</div>;
 
   return (
@@ -77,50 +59,39 @@ export default function ProductDetails() {
 
       <section className="mt-12">
         <h2 className="text-xl font-semibold mb-4">Reviews</h2>
-        {loadingReviews ? (
-          <p>Loading reviews...</p>
-        ) : reviews.length === 0 ? (
+        {product.reviews.length === 0 ? (
           <p>No reviews yet.</p>
         ) : (
           <div className="space-y-4">
-            {reviews.map((review, index) => {
-              // Find the txnId (transaction hash) from the product's reviews array
-              const productReview = product.reviews.find(
-                (r) => r.reviewId === Number(review.reviewId)
-              );
-
-              const txnHash = productReview?.txnId;
-
-              return (
-                <div key={index} className="border p-4 rounded">
-                  <p>
-                    <strong>Rating:</strong>{" "}
-                    <span className={getRatingColor(Number(review.rating))}>
-                      {"★".repeat(Number(review.rating))}
-                    </span>
+            {product.reviews.map((review, index) => (
+              <div key={index} className="border p-4 rounded">
+                <p>
+                  <strong>Rating:</strong>{" "}
+                  <span className={getRatingColor(review.rating)}>
+                    {"★".repeat(review.rating)}
+                  </span>
+                </p>
+                <p>
+                  <strong>Comment:</strong> {review.comment}
+                </p>
+                <p className="text-sm text-gray-500">
+                  By: {review.reviewer} at{" "}
+                  {isClient ? new Date(review.timestamp * 1000).toLocaleString() : "Loading..."}
+                </p>
+                {review.txnId && (
+                  <p className="text-sm text-blue-600">
+                    <a
+                      href={`https://sepolia.etherscan.io/tx/${review.txnId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      View Transaction
+                    </a>
                   </p>
-                  <p>
-                    <strong>Comment:</strong> {review.comment}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    By: {review.reviewer} at{" "}
-                    {isClient ? new Date(Number(review.timestamp) * 1000).toLocaleString() : "Loading..."}
-                  </p>
-                  {txnHash &&
-                    <p className="text-sm text-blue-600">
-                      <a
-                        href={`https://sepolia.etherscan.io/tx/${txnHash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline"
-                      >
-                        View Transaction
-                      </a>
-                    </p>
-                  }
-                </div>
-              );
-            })}
+                )}
+              </div>
+            ))}
           </div>
         )}
       </section>
@@ -128,7 +99,7 @@ export default function ProductDetails() {
       <section className="mt-12">
         <h2 className="text-xl font-semibold mb-4">Submit a Review</h2>
         {address ? (
-          <ReviewForm productId={product.id} onReviewSubmitted={fetchReviews} />
+          <ReviewForm productId={product.id} onReviewSubmitted={() => fetchProduct()} />
         ) : (
           <p>Please connect your wallet to submit a review.</p>
         )}

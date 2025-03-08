@@ -1,13 +1,10 @@
-// components/ReviewForm.tsx
-
-"use client"
+"use client";
 
 import { useState } from "react";
 import { useWalletClient } from "wagmi";
 import { ethers } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/contract";
 import { WalletClient } from "viem";
-import { products } from "@/lib/products";
 
 export default function ReviewForm({
   productId,
@@ -29,7 +26,7 @@ export default function ReviewForm({
     return ethersProvider.getSigner();
   }
 
-  const submit = async (e: React.FormEvent) => {
+  const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
     setIsSuccess(false);
@@ -50,25 +47,36 @@ export default function ReviewForm({
 
       console.log("Transaction successful:", receipt.hash);
 
-      // Get the latest reviewId by checking the contract (assuming it emits an event or you fetch reviews again)
+      // Fetch latest review details
       const reviews = await contract.getReviewsbyproductId(productId);
       const latestReview = reviews[reviews.length - 1];
 
-
-      // Update products reviews array
-      const product = products.find((p) => p.id === productId);
-      const review: Review = {
+      const review = {
         reviewId: Number(latestReview.reviewId),
+        rating,
+        comment,
+        reviewer: await signer.getAddress(),
+        timestamp: Math.floor(Date.now() / 1000), // Unix timestamp
         txnId: tx.hash,
       };
 
-      if (product) {
+      // Update backend database via API
+      const response = await fetch("/api/product/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, review }),
+      });
 
-        product.reviews.push(review);
-
+      if (!response.ok) {
+        throw new Error("Failed to update product review");
       }
+
+      console.log("Review updated in database");
+      
       setIsSuccess(true);
-      onReviewSubmitted(); // ✅ Trigger refresh of reviews
+      onReviewSubmitted(); // ✅ Refresh reviews
     } catch (error) {
       console.log(error);
       setIsError(true);
@@ -78,7 +86,7 @@ export default function ReviewForm({
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submitReview} className="space-y-4">
       <div>
         <label>Rating:</label>
         <select
@@ -106,7 +114,7 @@ export default function ReviewForm({
         disabled={isPending}
         className="bg-blue-500 text-white px-4 py-2 rounded"
       >
-        {isPending ? "Submitting..." : "Submit Review"}
+        {isPending ? "Transaction in Progress..." : "Submit Review"}
       </button>
       {isSuccess && <p className="text-green-600">Review submitted successfully!</p>}
       {isError && <p className="text-red-600">Something went wrong. Please try again.</p>}

@@ -23,7 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <WagmiConfig config={config}>
         <RainbowKitProvider>{children}</RainbowKitProvider>
-      </WagmiConfig>A
+      </WagmiConfig>
     </QueryClientProvider>
   );
 }

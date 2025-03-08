@@ -1,5 +1,8 @@
 type Review = {
-    reviewId: number;
-    txnId: string;
-  };
-  
+  reviewId: number;
+  rating: number;
+  comment: string;
+  reviewer: string;
+  timestamp: number;
+  txnId: string;
+};
