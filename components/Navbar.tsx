@@ -15,8 +15,8 @@ export default function Navbar() {
         <Image
           src="/logo.png"
           alt="Logo"
-          width={50}
-          height={50}
+          width={40}
+          height={40}
           className="rounded-full"
         /></Link>
         <span className="text-xl font-bold"><Link href="/">Trust Review</Link></span>
