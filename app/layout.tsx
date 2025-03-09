@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className="bg-gray-100">
         <Providers>
           <Navbar />
-          <div className="pt-20">{children}</div> {/* Add padding-top */}
+          <div className="pt-20">{children}</div> 
         </Providers>
       </body>
     </html>

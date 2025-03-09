@@ -9,7 +9,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 const config = getDefaultConfig({
   appName: "Trust Review",
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "dev", // or "test" for dev
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "dev",
   chains: [sepolia],
   transports: {
     [sepolia.id]: http(),

@@ -75,7 +75,12 @@ export default function ProductDetails() {
                   <strong>Comment:</strong> {review.comment}
                 </p>
                 <p className="text-sm text-gray-500">
-                  By: {review.reviewer} at{" "}
+                  By: <a
+                    href={`https://sepolia.etherscan.io/address/${review.reviewer}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >{review.reviewer}</a> at{" "}
                   {isClient ? new Date(review.timestamp * 1000).toLocaleString() : "Loading..."}
                 </p>
                 {review.txnId && (

@@ -15,11 +15,11 @@ export default function Navbar() {
         <Image
           src="/logo.png"
           alt="Logo"
-          width={40}
-          height={40}
+          width={50}
+          height={50}
           className="rounded-full"
         /></Link>
-        <span className="text-xl font-bold"><Link href="/">TrustReview</Link></span>
+        <span className="text-xl font-bold"><Link href="/">Trust Review</Link></span>
       </div>
 
       <ConnectButton />
