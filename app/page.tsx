@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
-
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -19,7 +18,11 @@ export default function HomePage() {
           throw new Error("Failed to fetch products");
         }
         const data: Product[] = await response.json();
-        setProducts(data);
+
+        // Sort products: those with reviews first
+        const sortedProducts = data.sort((a, b) => (b.review_count > 0 ? 1 : 0) - (a.review_count > 0 ? 1 : 0));
+
+        setProducts(sortedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -27,7 +30,7 @@ export default function HomePage() {
 
     fetchProducts();
   }, []);
-  
+
   return (
     <main className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {products.map((product) => {

@@ -19,6 +19,12 @@ export default function ProductDetails() {
     try {
       const response = await fetch(`/api/products?productId=${productId}`);
       const data = await response.json();
+      
+      // Sort reviews by timestamp (latest first)
+      if (data.reviews) {
+        data.reviews.sort((a: { timestamp: number; }, b: { timestamp: number; }) => b.timestamp - a.timestamp);
+      }
+      
       setProduct(data);
     } catch (error) {
       console.error("Error fetching product:", error);
@@ -80,7 +86,7 @@ export default function ProductDetails() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline"
-                  >{review.reviewer}</a> at{" "}
+                  >{review.reviewer}</a> at {" "}
                   {isClient ? new Date(review.timestamp * 1000).toLocaleString() : "Loading..."}
                 </p>
                 {review.txnId && (
