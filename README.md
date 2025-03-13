@@ -1,40 +1,64 @@
-# trustreview
-Decentralized Product Review Platform by @SamsonJK - Alchemy Univesity
+# 🛒 Decentralized Product Review System
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This project is a **Web3-based product review platform** that enables users to submit, view, and verify reviews on the blockchain. Built using **Next.js**, **Wagmi**, and **Alchemy SDK**, it ensures decentralized, tamper-proof product reviews while integrating wallet authentication. Users can connect their wallets, submit reviews with Ethereum transactions, and view sorted product reviews dynamically.
 
-## Getting Started
+## 🚀 Features
 
-First, run the development server:
+✅ **Decentralized Reviews** – Ensures transparency and authenticity by storing reviews on the blockchain.  
+✅ **Wallet Authentication** – Users must connect a wallet to submit reviews.  
+✅ **Review Sorting** – Displays reviews in descending order based on submission time.  
+✅ **Prioritized Product Listings** – Products with reviews are displayed first.  
+✅ **Real-Time Updates** – Automatically updates review lists without refreshing.  
+✅ **Transaction Verification** – Each review is linked to **Etherscan** for on-chain proof.  
 
-```bash
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js, Tailwind CSS, Wagmi  
+- **Blockchain Tools**: Alchemy SDK, Ethers.js  
+- **Smart Contracts**: Solidity (if applicable)  
+
+## 📦 Installation
+
+Follow these steps to set up the project locally:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/samsonjk/trustreview
+
+cd trustreview
+
+npm install
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and visit http://localhost:3000 to use the application
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+⚡ Usage
+Connect your Ethereum wallet (MetaMask or any WalletConnect-compatible wallet).
+Browse available products and read verified blockchain-based reviews.
+Submit a review by providing a rating and a comment.
+Confirm the transaction on the Sepolia Testnet to store the review on-chain.
+Check review authenticity by verifying the transaction on Etherscan.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📌 Next Steps
+🔹 IPFS Integration – Store product images and reviews in a decentralized manner.
+🔹 Advanced Filtering – Implement category-based filtering for better user experience.
+🔹 Performance Optimization – Improve load times and optimize blockchain interactions.
+🔹 Multi-Network Support – Expand compatibility beyond Sepolia to other Ethereum testnets.
 
-## Learn More
+🛡️ License
+This project is open-source and available under the MIT License.
 
-To learn more about Next.js, take a look at the following resources:
+💡 Contributions are welcome! Feel free to submit issues, pull requests, or suggestions to improve
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This **README.md** includes:  
+✔️ **Project Overview**  
+✔️ **Features List**  
+✔️ **Tech Stack**  
+✔️ **Installation Guide**  
+✔️ **Usage Instructions**  
+✔️ **Future Enhancements**  
+✔️ **License Information**  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
+Let me know if you’d like any modifications! 🚀
